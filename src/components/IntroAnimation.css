@@ -1,0 +1,502 @@
+/* ═══════════════════════════════════════════════════════
+   INTRO ANIMATION — Basketball Screen Shatter
+═══════════════════════════════════════════════════════ */
+
+/* ── KEYFRAMES ── */
+
+@keyframes introBallFly {
+  /* Ball appears tiny and far away, moves slowly at first, then ACCELERATES into screen */
+  0%   {
+    transform: translate(-50%, -50%) translate(150vw, -80vh) rotate(-900deg) scale(0.04);
+    filter: blur(22px) drop-shadow(0 0 6px rgba(255,107,43,0.25));
+    opacity: 0;
+  }
+  6%   { opacity: 1; }
+  /* 55% of time — ball is still far, creeping forward */
+  55%  {
+    transform: translate(-50%, -50%) translate(38vw, -18vh) rotate(-290deg) scale(0.38);
+    filter: blur(5px) drop-shadow(0 0 25px rgba(255,107,43,0.7));
+  }
+  /* 80% — ball is close now, rapidly gaining speed */
+  80%  {
+    transform: translate(-50%, -50%) translate(9vw, -4vh) rotate(-60deg) scale(0.85);
+    filter: blur(1px) drop-shadow(0 0 55px rgba(255,107,43,0.95));
+  }
+  /* 100% — SLAM */
+  100% {
+    transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(1.2);
+    filter: blur(0px) drop-shadow(0 0 90px rgba(255,107,43,1));
+  }
+}
+
+@keyframes introBallImpact {
+  0%   {
+    transform: translate(-50%, -50%) scale(1.2);
+    filter: drop-shadow(0 0 90px rgba(255,107,43,1));
+  }
+  30%  {
+    transform: translate(-50%, -50%) scale(2.6);
+    filter: drop-shadow(0 0 160px rgba(255,220,120,1));
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    filter: drop-shadow(0 0 0px rgba(255,107,43,0));
+  }
+}
+
+@keyframes shardFly {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+  30%  { opacity: 0.8; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--dr)) scale(0.4);
+         opacity: 0; }
+}
+
+@keyframes flashIn {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes crackDraw {
+  from { stroke-dashoffset: 300; opacity: 0; }
+  5%   { opacity: 1; }
+  to   { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes impactRing {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(6); opacity: 0; }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50%       { transform: translateY(-30px) scale(1.2); opacity: 0.9; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.15); }
+}
+
+@keyframes shimmerText {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes loadingFill {
+  0%   { width: 0%; }
+  50%  { width: 40%; }   /* slow fill while ball is far */
+  80%  { width: 88%; }   /* accelerates as ball approaches */
+  100% { width: 100%; }
+}
+
+@keyframes scanlines {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 4px; }
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-6px, -4px) rotate(-0.5deg); }
+  20% { transform: translate(6px, 4px) rotate(0.5deg); }
+  30% { transform: translate(-8px, 3px) rotate(-0.3deg); }
+  40% { transform: translate(8px, -3px) rotate(0.3deg); }
+  50% { transform: translate(-4px, 5px) rotate(-0.2deg); }
+  60% { transform: translate(4px, -5px) rotate(0.2deg); }
+  70% { transform: translate(-3px, 2px) rotate(-0.1deg); }
+  80% { transform: translate(3px, -2px) rotate(0.1deg); }
+}
+
+@keyframes overlayFadeOut {
+  to { opacity: 0; pointer-events: none; }
+}
+
+@keyframes ttflBgPulse {
+  0%, 100% { opacity: 0.04; }
+  50%       { opacity: 0.08; }
+}
+
+/* ── OVERLAY ── */
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  cursor: default;
+  background: #06060e;
+}
+
+.intro-done {
+  animation: overlayFadeOut 0.4s ease forwards;
+  pointer-events: none;
+}
+
+/* ── BACKGROUND ── */
+
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.intro-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.glow-orange {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(255,107,43,0.18) 0%, transparent 65%);
+  top: -200px; right: -150px;
+  animation: glowPulse 2.8s ease-in-out infinite;
+}
+.glow-cyan {
+  width: 900px; height: 900px;
+  background: radial-gradient(circle, rgba(0,212,255,0.09) 0%, transparent 60%);
+  bottom: -350px; left: -250px;
+  animation: glowPulse 3.5s ease-in-out infinite reverse;
+}
+
+.intro-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+  background-size: 28px 28px;
+  /* Subtle scanlines */
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0),
+    repeating-linear-gradient(transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+  background-size: 28px 28px, 100% 4px;
+}
+
+.intro-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particleFloat linear infinite;
+  pointer-events: none;
+}
+
+/* ── PRE-TITLE ── */
+
+.intro-pre-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.intro-ttfl-bg {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(100px, 20vw, 220px);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  background: linear-gradient(135deg, rgba(255,107,43,0.12), rgba(255,107,43,0.04));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: ttflBgPulse 2s ease-in-out infinite;
+  user-select: none;
+}
+
+.intro-season {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  margin-top: 8px;
+}
+
+.intro-loading-bar {
+  width: 180px;
+  height: 2px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  margin-top: 32px;
+  overflow: hidden;
+}
+.intro-loading-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange, #ff6b2b), #ff9d5c);
+  border-radius: 2px;
+  animation: loadingFill 1.95s linear forwards; /* matches ball approach */
+  box-shadow: 0 0 8px rgba(255,107,43,0.6);
+}
+
+/* ── BASKETBALL ── */
+
+.intro-ball {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.ball-emoji {
+  display: block;
+  font-size: 90px;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.intro-ball-incoming {
+  /* linear so our custom keyframe percentages control the easing */
+  animation: introBallFly 1.5s linear forwards;
+}
+.intro-ball-impact {
+  animation: introBallImpact 0.38s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+}
+
+.ball-glow {
+  position: absolute;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(255,107,43,0.6) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 1;
+  filter: blur(20px);
+}
+
+.ball-trail {
+  position: absolute;
+  width: 300px; height: 300px;
+  background: conic-gradient(
+    from 155deg,
+    rgba(255,230,100,0.5),
+    rgba(255,107,43,0.35),
+    rgba(200,40,0,0.1),
+    transparent 38%
+  );
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(6px);
+}
+
+/* Fire comet tail — points toward ball origin (upper-right) */
+.ball-fire {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 260px;
+  /* bottom pin near the ball, top extends toward origin */
+  transform: translate(-50%, -95%) rotate(55deg);
+  transform-origin: 50% 100%;
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    rgba(200, 40, 0, 0.25) 20%,
+    rgba(255, 107, 43, 0.7) 55%,
+    rgba(255, 200, 80, 0.9) 80%,
+    rgba(255, 255, 200, 0.6) 100%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 50% 50% 0 0;
+}
+
+/* ── IMPACT RINGS ── */
+
+.impact-ring {
+  position: absolute;
+  left: 50%; top: 50%;
+  border-radius: 50%;
+  border: 2px solid rgba(255,150,60,0.8);
+  pointer-events: none;
+  z-index: 18;
+}
+.ring-1 {
+  width: 80px; height: 80px;
+  margin-left: -40px; margin-top: -40px;
+  animation: impactRing 0.5s ease-out forwards;
+  border-color: rgba(255,255,255,0.9);
+  border-width: 3px;
+}
+.ring-2 {
+  width: 80px; height: 80px;
+  margin-left: -40px; margin-top: -40px;
+  animation: impactRing 0.6s 0.05s ease-out forwards;
+  border-color: rgba(255,150,60,0.7);
+}
+.ring-3 {
+  width: 80px; height: 80px;
+  margin-left: -40px; margin-top: -40px;
+  animation: impactRing 0.7s 0.1s ease-out forwards;
+  border-color: rgba(0,212,255,0.5);
+}
+
+/* ── FLASH ── */
+
+.intro-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+    rgba(255,255,255,1) 0%,
+    rgba(255,180,80,0.95) 20%,
+    rgba(255,107,43,0.6) 50%,
+    transparent 75%
+  );
+  z-index: 25;
+  pointer-events: none;
+  animation: flashIn 0.35s ease-out forwards;
+}
+
+/* ── CRACK SVG ── */
+
+.crack-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.crack {
+  stroke: rgba(255,255,255,0.65);
+  stroke-width: 0.28;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: crackDraw 0.24s ease-out forwards;
+  /* Glow: bright white core + warm orange halo */
+  filter:
+    drop-shadow(0 0 1px rgba(255,255,255,1))
+    drop-shadow(0 0 3px rgba(255,200,100,0.8))
+    drop-shadow(0 0 6px rgba(255,107,43,0.5));
+}
+/* Main cracks staggered — one by one */
+.c1 { animation-delay: 0.00s; }
+.c2 { animation-delay: 0.18s; }
+.c3 { animation-delay: 0.08s; }
+.c4 { animation-delay: 0.34s; }
+.c5 { animation-delay: 0.24s; }
+.c6 { animation-delay: 0.50s; }
+.c7 { animation-delay: 0.40s; }
+.c8 { animation-delay: 0.66s; }
+.csec {
+  stroke: rgba(255,255,255,0.28);
+  stroke-width: 0.14;
+  animation: crackDraw 0.22s ease-out forwards;
+}
+
+/* Shake the whole overlay on impact */
+.intro-impact {
+  animation: screenShake 0.28s ease-out forwards;
+}
+
+/* ── SHARDS ── */
+
+.shards-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.shard {
+  position: absolute;
+  inset: 0;
+  /* Each shard = a piece of the dark intro screen */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.06) 0%,
+      rgba(255,255,255,0.02) 30%,
+      rgba(0,0,0,0) 60%
+    ),
+    linear-gradient(to bottom, #0d0d1e 0%, #06060e 100%);
+  /* Subtle grid texture on each shard */
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 40%, transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0),
+    linear-gradient(to bottom, #0d0d1e, #06060e);
+  background-size: 100%, 28px 28px, 100%;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.2));
+  will-change: transform, opacity;
+}
+
+.shard-fly {
+  animation: shardFly 0.75s cubic-bezier(0.2, 0, 0.6, 1) forwards;
+}
+
+/* ── SKIP BUTTON ── */
+
+.intro-skip {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.4);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+.intro-skip:hover {
+  color: rgba(255,255,255,0.8);
+  border-color: rgba(255,107,43,0.5);
+  background: rgba(255,107,43,0.1);
+}
+
+/* ── SHOCKWAVE ── */
+@keyframes shockwaveExpand {
+  0%   { transform: translate(-50%, -50%) scale(0);   opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(10);  opacity: 0; }
+}
+.shockwave {
+  position: absolute;
+  left: 50%; top: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 22;
+}
+.sw-1 {
+  width: 80px; height: 80px;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  animation: shockwaveExpand 0.7s cubic-bezier(0.2, 0, 0.6, 1) forwards;
+}
+.sw-2 {
+  width: 80px; height: 80px;
+  border: 2px solid rgba(255, 150, 60, 0.7);
+  animation: shockwaveExpand 0.9s 0.08s cubic-bezier(0.2, 0, 0.6, 1) forwards;
+}
+
+/* Light leak through cracks */
+@keyframes crackLeak {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.35; }
+  100% { opacity: 0; }
+}
+.crack-svg {
+  /* already has position absolute inset 0 */
+}
+/* After all cracks appear, give the SVG container a warm glow */
+.intro-shattering .crack-svg,
+.intro-done .crack-svg {
+  filter: drop-shadow(0 0 4px rgba(255, 180, 60, 0.4));
+}

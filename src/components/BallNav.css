@@ -1,0 +1,235 @@
+/* ═══════════════════════════════════════════════════════
+   BALL NAVIGATION
+═══════════════════════════════════════════════════════ */
+
+/* ── Keyframes ── */
+
+@keyframes bnFlipOut {
+  0%   { transform: perspective(500px) rotateY(0deg)   scale(1);    filter: brightness(1); }
+  100% { transform: perspective(500px) rotateY(85deg)  scale(0.72); filter: brightness(0.3); }
+}
+@keyframes bnFlipIn {
+  0%   { transform: perspective(500px) rotateY(-85deg) scale(0.72); filter: brightness(0.3); }
+  100% { transform: perspective(500px) rotateY(0deg)   scale(1);    filter: brightness(1); }
+}
+@keyframes bnOrbitPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%       { opacity: 1;    transform: scale(1.05); }
+}
+@keyframes bnMiniFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ── Layout ── */
+
+.ball-nav {
+  padding: 12px 0 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+}
+
+.bn-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+/* ── Basketball shared base ── */
+.bn-main,
+.bn-mini {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 33%,
+    #ff9050 0%, #e05010 50%, #8a2000 88%, #6b1800 100%);
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* ── Main ball ── */
+.bn-main-outer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Reserve space so orbit ring doesn't shift layout */
+  padding: 10px;
+}
+
+.bn-main {
+  width: 152px;
+  height: 152px;
+  box-shadow:
+    inset -8px -8px 22px rgba(0,0,0,0.55),
+    inset 5px 5px 14px rgba(255,180,80,0.22),
+    0 0 36px rgba(255, 107, 43, 0.55),
+    0 12px 32px rgba(0,0,0,0.55);
+  transition: box-shadow 0.4s ease, transform 0.12s ease;
+}
+
+.bn-main:active {
+  transform: scale(0.96);
+}
+
+/* ── Seam SVG ── */
+.bn-seams {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── Shine highlight ── */
+.bn-shine {
+  position: absolute;
+  top: 10%;
+  left: 14%;
+  width: 38%;
+  height: 26%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: rotate(-32deg);
+  pointer-events: none;
+}
+
+/* ── Center text on main ball ── */
+.bn-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.bn-big-icon {
+  font-size: 38px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.65));
+}
+
+.bn-big-label {
+  font-family: var(--font-ui, 'Rajdhani'), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.95);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+  white-space: nowrap;
+}
+
+/* ── Orbit ring ── */
+.bn-orbit {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent, #ff6b2b);
+  box-shadow: 0 0 14px var(--accent, #ff6b2b);
+  animation: bnOrbitPulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Flip animations ── */
+.bn-anim-out .bn-main {
+  animation: bnFlipOut 0.23s ease-in forwards;
+}
+.bn-anim-in .bn-main {
+  animation: bnFlipIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Side mini balls ── */
+.bn-side {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bn-side:hover {
+  opacity: 0.82;
+  transform: scale(1.1);
+}
+.bn-side:active {
+  transform: scale(0.95);
+}
+
+.bn-mini {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset -3px -3px 8px rgba(0,0,0,0.45),
+    inset 2px 2px 6px rgba(255,160,60,0.12);
+  animation: bnMiniFloat 3s ease-in-out infinite;
+}
+
+.bn-side-left .bn-mini  { animation-delay: 0s; }
+.bn-side-right .bn-mini { animation-delay: 1.5s; }
+
+.bn-mini-icon {
+  position: relative;
+  z-index: 2;
+  font-size: 18px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+  pointer-events: none;
+}
+
+.bn-side-label {
+  font-family: var(--font-ui, 'Rajdhani'), sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255,255,255,0.35));
+  white-space: nowrap;
+}
+
+/* ── Dots ── */
+.bn-dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--text-muted, rgba(255,255,255,0.18));
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bn-dot.active {
+  width: 26px;
+  background: var(--accent, #ff6b2b);
+  box-shadow: 0 0 10px var(--accent, #ff6b2b);
+}
+
+/* ── Light theme ── */
+[data-theme="light"] .bn-main,
+[data-theme="light"] .bn-mini {
+  background: radial-gradient(circle at 38% 33%,
+    #ffac6b 0%, #e8680a 52%, #a03000 88%, #7a1f00 100%);
+}
+[data-theme="light"] .bn-side-label {
+  color: rgba(0,0,0,0.4);
+}
